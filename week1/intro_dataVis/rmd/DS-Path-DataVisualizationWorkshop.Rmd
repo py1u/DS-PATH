@@ -1,0 +1,941 @@
+---
+title: "DS-PATH R Data Visualization Workshop"
+author: "Emily Ouyang"
+date: "June 18, 2024"
+output:
+  html_document:
+    toc: yes
+---
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, collapse = TRUE)
+```
+
+***
+
+# Acknowledgements
+
+This material expands on the work of Dr. Wenxiu Ma.
+
+
+***
+
+# Purpose of Data Visualization
+
+Data visualization is an important and powerful part of statistical analysis as it helps communicate and build understanding to make informed decision. There is a lot of power in properly representing (and misrepresenting) data, so it is important to be mindful of such.
+
+You can find many [good examples ](https://informationisbeautiful.net/) on the internet. That being said, there are many [bad examples](https://viz.wtf/) as well. One can easily construe data so it is beneficial to stakeholders. Common tactics involve changing range of data or [spurious correlation](https://www.tylervigen.com/spurious-correlations).
+
+***
+
+
+# Useful tutorials and reference sheets
+
+### "**R for Data Science**" by Grolemund and Wickham
+
+- Online textbook available at [http://r4ds.had.co.nz/](http://r4ds.had.co.nz/)
+
+### RStudio Cheat Sheets
+
+Latest cheat sheets available at [https://www.rstudio.com/resources/cheatsheets/](https://www.rstudio.com/resources/cheatsheets/)
+
+- [RStudio IDE Cheat Sheet](https://raw.githubusercontent.com/rstudio/cheatsheets/main/rstudio-ide.pdf)
+- [R Markdown Cheat Sheet](https://raw.githubusercontent.com/rstudio/cheatsheets/main/rmarkdown.pdf)
+- [Data Visualization Cheat Sheet](https://raw.githubusercontent.com/rstudio/cheatsheets/main/data-visualization.pdf)
+- [Data Transformation Cheat Sheet](https://raw.githubusercontent.com/rstudio/cheatsheets/main/data-transformation.pdf)
+- [Data tidying Cheat Sheet](https://raw.githubusercontent.com/rstudio/cheatsheets/main/tidyr.pdf)
+- [Data Import Cheat Sheet](https://raw.githubusercontent.com/rstudio/cheatsheets/main/data-import.pdf)
+- [Work with Strings Cheat Sheet](https://raw.githubusercontent.com/rstudio/cheatsheets/main/strings.pdf)
+- [Dates and Times Cheat Sheet](https://raw.githubusercontent.com/rstudio/cheatsheets/main/lubridate.pdf)    
+
+***
+
+# Typical data science project workflow
+
+![](http://r4ds.had.co.nz/diagrams/data-science.png)
+
+### Data wrangling
+First step is data wrangling. That is, getting your data into R in a useful form for visualization and modeling.
+
+![](http://r4ds.had.co.nz/diagrams/data-science-wrangle.png)
+
+### Data exploration/visualization
+Next step is data exploration. Data exploration is the art of looking at your data, rapidly generating hypotheses, quickly testing them, then repeating again and again and again. 
+
+![](http://r4ds.had.co.nz/diagrams/data-science-explore.png)
+
+### Presenting your findings
+Lastly, you need to communicate your results! It doesn’t matter how great your analysis is unless you can explain it to others.
+
+![](http://r4ds.had.co.nz/diagrams/data-science-communicate.png)
+
+***
+
+
+Effective data visualization hinges on having meaningful data set(s) to analyze and present. For this workshop, we will be using the `mpg` data frame in the `ggplot2` library (imported with `tidyverse). This data set contains fuel economy data 1999 - 2008 for 38 popular car models (source: EPA. [fueleconomy.com/](http://fueleconomy.gov)).
+
+To load the data, we first need to load the `tidyverse` library.
+
+**Install the package necessary packages**
+
+```{r, eval=F}
+# install tidyverse if you haven't done so
+# You only need to install it once. Note that the eval option of this chuck is set to F.
+# install.packages("tidyverse")
+```
+
+**Load necessary packages**
+
+```{r}
+# load the package before usage
+library(tidyverse) # for `ggplot2`, `dplyr`, `tibble`, `readr`, `purrr`, and `dplyr`
+```
+
+
+```{r, collapse=T}
+dim(mpg)  # dimension of the table
+names(mpg)  # list the variables in mpg
+```
+
+### Get a glimpse of your data
+
+To view your data, common methods are utilizing functions such as `glimpse()`, `head()` and `tail()`.
+
+- `glimpse()`: gives detailed summary of data frame with column names and data types
+- `head()`: view first few rows of a data set
+- `tail()`: view last few rows of a data set
+
+```{r}
+#str(mpg) # list the structures in mpg
+
+glimpse(mpg) # Get a glimpse of your data
+# can also use head(mpg)
+```
+Before we swing into data visualization techniques, we need to be able to identify which variables are categorical (quantitative) and which are numerical. The type of variable it is affects which data visualization technique should be used.
+
+In our working data set, those that have `<chr>` are character variables, i.e. categorical. The remaining variables are numerical.
+
+
+***
+
+# Data visualization with base R
+
+Basic plotting in R refers to using foundational functions within the base R package to generate simple yet effective visual representations of data.
+
+### Basic Plotting in Base R
+
+There are a lot of different plots available in base R. Some commonly used ones follow:
+
+- Bar Plot: Show frequencies of different classes/categories
+  - Use the `barplot(y)` function, where `y` is a categorical variable
+- Pie Chart*: Show proportions of different classes relative to the whole
+  - 
+- Scatter Plot: Displays the relationship between two numerical variables.
+- Line Plot: Shows data points connected by straight lines, useful for displaying trends over time.
+- Histogram: A graphical representation of the distribution of numerical data, showing frequencies of data points within certain ranges.
+  - Use the `hist(y)`, where `y` is numerical variable
+  - Can customize number of bins by using `breaks = x`, where `x` is whatever number of bins 
+- Box Plot: Summarizes the distribution of a numerical variable through quartiles, indicating variability and potential outliers.
+  - Use the `boxplot(y)`, where `y` is numerical variable
+  - Can use to compare the distribution of `y` by different groups of `x`
+    - Syntax is `boxplot(y~x)` if you want to try playing with it on your own)!
+
+
+These functions can operate directly on data objects like vectors, matrices, and data frames. Each function has its own syntax, however, so one must practice to become familiar with them!
+
+We focus on the numerical data visualization first.
+
+We create a simple example plot below.
+
+```{r}
+# Scatter plot
+# Define variabes
+x <- 1:10
+y <- x^2
+
+# Create a scatter plot
+plot(x, y, main = "Scatter Plot", xlab = "X Axis", ylab = "Y Axis")
+```
+
+
+### Customizing plots
+
+Customization in data visualization involves tailoring visual elements of plots to better convey insights or emphasize specific aspects of the data. In base R, commonly used customization options include
+
+- `main`: adjusting plot titles
+- `xlab`, `ylab`, axis labels
+- `xlim`, `ylim`: set viewing range of x/y-axis
+- `col`: colors
+- `pch`: symbols
+
+
+Building off our previous example,
+
+```{r}
+# Customizing a scatter plot
+plot(x, y, main = "Customized Scatter Plot", xlab = "X Axis", ylab = "Y Axis",
+     col = "blue", pch = 19, xlim = c(0, 12), ylim = c(0, 150))
+```
+
+
+### Plotting Multiple Values in Same Plot
+
+There will be times you want to plot multiple values or lines in the same plot. In base R, you have an initial plot which you then draw on top of. There are different functions depending on what to do this drawing. Note that `plot` must be called first.
+- `points(x, y, ...)`: add points to base R plot
+- `abline()`: draw a straight line
+  - `h`: where to draw line horizontally (y-value)
+  - `v`: where to draw line vertically (x-value)
+  - `a`, `b`: specify intercept (*a*) and slope (*b*)
+- `lines`: can draw lines connecting points
+
+Note that all of these can be customized via common graphical parameters such as `pch` (points only), `lty`, `lwd` (lines), `col`, and more! Feel free to play around to get more familiar with the commands.
+
+```{r}
+# Example data
+# reminder: x <- 1:10
+y1 <- x^2
+y2 <- x^1.5
+
+# Plot with multiple lines
+plot(x, y1, type = "l", col = "blue", lwd = 2, ylim = c(0, max(y1, y2)),
+     main = "Example Plot", xlab = "X Axis", ylab = "Y Axis")
+lines(x, y2, col = "red", lwd = 2)
+```
+
+
+Good data visualization practice involves labeling which data is which. A common method of doing this is to create a legend. Taking the previous code we had, we use the `legend()` command after it.
+
+
+```{r}
+# Plot with multiple lines
+plot(x, y1, type = "l", col = "blue", lwd = 2, ylim = c(0, max(y1, y2)),
+     main = "Example Plot", xlab = "X Axis", ylab = "Y Axis")
+lines(x, y2, col = "red", lwd = 2)
+
+# Adding legend
+legend("topleft", legend = c("Y = X^2", "Y = X^1.5"), 
+       col = c("blue", "red"), lwd = 2, 
+       title = "Lines", cex = 0.8)
+```
+
+
+-   **`"topright"`**: Specifies the position of the legend relative to the plot. Other options include `"topleft"`, `"bottomleft"`, `"bottomright"`, `"right"`, `"left"`, `"top"`, `"bottom"`, and coordinates like `c(x, y)`
+-   **`legend`**: A vector of text labels to display in the legend, corresponding to each plotted element
+-   **`col`**: Vector of colors for each line or symbol in the legend. R has built in colors such as `red` and `blue`, but there are numeric representations for colors as well. Play around with them!
+-   **`lwd`**: Line width for each line in the legend
+-   **`title`**: Title for the legend
+-   **`cex`**: Character expansion factor; adjusts the size of the legend text.
+
+
+### Extra: Multiple Plots
+
+Use `par(mfrow = c(rows, cols))` to specify the layout of plots in rows and columns within a single plotting window. An example is shown below:
+
+```{r}
+# reminder:
+# x <- 1:10
+# y <- x^2
+data <- runif(100, 0, 50)
+
+# Arranging multiple plots
+par(mfrow = c(2, 2))  # Set layout to 2x2
+plot(x, y, main = "Plot 1")
+hist(data, main = "Plot 2")
+boxplot(data, main = "Plot 3")
+plot(x, y, type = "l", main = "Plot 4")
+par(mfrow = c(1, 1))  # Reset to single plot layout
+```
+
+
+### Practice!
+
+We now are gonna practice making all the basic plots using the data set we loaded in earlier.
+
+1. First create a histogram of the highway miles per gallon (`hwy`). Reminder: To access the variable, use `$` followed by the variable name.
+
+Syntax:
+```{r, eval = FALSE}
+# syntax for creating histogram
+hist(x = variable, breaks = n,
+     main = "Plot Name", 
+     xlab = "X-axis Label", ylab = "Y-axis Label")
+```
+
+Try the code with omitting the break command, with `breaks = 5` and `breaks =  15`. Do you notice anything different about the way the code performs?
+
+```{r}
+# insert code here
+
+hist(x = mpg$hwy, main = "Highways", xlab = "Highways", ylab = "Frenquecy")
+
+hist(x = mpg$hwy, breaks = 5, main = "Highways", xlab = "Highways", ylab = "Frenquecy")
+
+hist(x = mpg$hwy, breaks = 15, main = "Highways", xlab = "Highways", ylab = "Count")
+
+#the change in breaks changes the number of breaks across the distribution
+```
+
+
+2. Now we will practice creating a box plot for the highway miles per gallon.
+
+```{r, eval = FALSE}
+# Syntax for creating a basic box plot
+boxplot(x, data = NULL,
+        main = NULL,
+        xlab = NULL, ylab = NULL,
+        xlim = NULL, ylim = NULL,
+        col = NULL, border = NULL,
+        notch = FALSE, outline = TRUE,
+        horizontal = FALSE,
+        ...)
+```
+
+First create a box plot for `hwy`. Make sure to create a title and label the corresponding axis. Feel free to add some color using `col = "colorName/number"` and `border = "colorName/number"`.
+
+```{r}
+# insert code here
+boxplot(x = mpg$hwy, main = "Number of Highways Distribution" ,data = mpg,xlab = "Highways", ylab = "MPG", col = "red")
+```
+
+
+Note: If you prefer a horizontal box plot, set `horizontal = TRUE` inside the `hist()` function.
+
+Now we will try to create box plots that are split by their groups. Here is an example of boy plots grouped by the number of cylinders a car has (`cyl`).
+
+```{r}
+# Example: group by num of cylinders
+boxplot(mpg$hwy ~ mpg$cyl,
+        main = "Miles per Gallon by Number of Cylinders",
+        xlab = "Number of Cylinders", ylab = "Miles per Gallon",
+        col = "grey", border = "blue")
+```
+
+
+Now try plotting a variable of your choice being grouped by the drive train (`drv`). Try playing with the additional color combinations and orientations as well. Make sure to prioritize readability of the plots as well! For a full list of commands, type `?boxplot` in your R console (bottom left).
+
+HINT: Your variable of choice must be numerical!
+
+Reminder: When you type the data set name followed by `$`, a variable list will pop up!
+
+```{r}
+# ?boxplot
+# Example: Creating a box plot of 
+boxplot(mpg$cty ~ mpg$drv,
+        main = "Miles per Gallon by Number of Cylinders",
+        xlab = "Number of Cylinders", ylab = "Miles per Gallon",
+        col = "grey", border = "blue", horizontal = TRUE)
+```
+
+3. Create a scatter plot to for the city mileage (`cty`) vs. the highway mileage (`hwy`). Make city mileage your y variable.
+
+```{r}
+# insert code here
+plot(x = mpg$hwy, y = mpg$cty, main = "Scatter Plot For City Mileage vs Highway Mileage")
+```
+
+We have that the line of best fit has intercept 0.8442 and slope 0.6832. Plot this as a red dashed line on top of the previous plot (Hint: use `lty = 2`).
+
+```{r}
+# insert code here
+plot(x = mpg$hwy, y = mpg$cty, main = "Scatter Plot For City Mileage vs Highway Mileage")
+abline(a = 0.8442, b = 0.6832, lwd = 2, col = "red")
+```
+
+
+4. Copy this code below into the blank code block. Add a legend to it where the red points represent forward wheel drive, blue represents rear-wheel drive, and green is four wheel drive.
+
+```{r, eval = FALSE}
+plot(x = hwy, y = city,
+     main = "City vs. Highway",
+     xlab = "Highway MPG", ylab = "City MPG",
+     col = ifelse(mpg$drv == "f", "red", ifelse(mpg$drv == "r", "blue", "green")))
+```
+
+
+```{r}
+# insert code here
+hwy = mpg$hwy
+city = mpg$cty
+
+plot(x = hwy, y = city,
+     main = "City vs. Highway",
+     xlab = "Highway MPG", ylab = "City MPG",
+     col = ifelse(mpg$drv == "f", "red", ifelse(mpg$drv == "r", "blue", "green")))
+
+legend()
+```
+
+***
+
+5. Now that we have become more familiar with visualizing quantitative data, we now work towards visualizing categorical data. Categorical data differs from the quantitative data visualization functions in that many of them require the frequencies of each class/category. To do so, we use the `table(x)` function, where `x` is the variable we are trying to find frequencies for.
+
+For example, we can get the frequencies of each kind of drive train. We save this as `drive_counts` for future use.
+
+```{r}
+drive_counts <- table(mpg$drv)
+drive_counts
+```
+
+Now that we have this, try graphing the categorical variable drive train (drv) as both a bar plot and a pie chart (Hint: put `drive_counts` in the `height` and `x` space respectively). The syntax for both are given below:
+
+```{r, eval = FALSE}
+barplot(height, names.arg = c("Vector"," of", "Category", "Names"),
+        main = "Title",
+        xlab = "Category Name", ylab = "Count",
+        col = "colorName/number", border = "colorName/number",
+        ...)
+```
+```{r}
+drive_types = c("Four Wheel", "Rear Wheel", "Forward Wheel")
+barplot(drive_counts, names.arg = drive_types)
+```
+
+
+```{r, eval = FALSE}
+# Pie chart syntax
+pie(x, labels = c("Vector"," of", "Category", "Names"), 
+    main = "Title",
+    col = "colorName/number", border = "colorName/number"
+    ...)
+```
+
+```{r}
+pie()
+```
+
+
+If you want more graphical parameters to play with, you can type `?barplot` and `?pie` respectively.
+
+```{r}
+# # insert code here
+```
+
+
+
+# Data visualization with `ggplot2`
+
+We now move towards the other common method of data visualization in R, `ggplot2` while building the foundation for our thought process for data visualization.
+
+
+
+### Why `ggplot2`?
+
+[//]: https://mandymejia.wordpress.com/2013/11/13/10-reasons-to-switch-to-ggplot-7/
+
+- It can do quick-and-dirty and complex, so you only need one system!
+- The default colors and other aesthetics are nicer.
+  - Automatically deals with spacing, text, titles but also allows you to annotate by "adding".
+- Superficial similarity to lattice but generally easier/more intuitive.
+- Multivariate exploration is greatly simplified
+- Plots are built up in layers to tell a more complete story.
+- It's not that hard!
+- Great documentation.
+
+
+# Installing R and RStudio
+
+### The `tidyverse` package
+
+**Install the package necessary packages**
+
+The `tidyverse` package is a package designed to emphasize clarity, reproducibility, and ease of use. It is centered around **tidy data** (structured data where each variable is a column, each observation is a row, and each type of observational unit is a table). Normally we would have to (install and) load the package before use, but we loaded it at the beginning of this workshop. The code to load the data is as follows
+
+
+```{r, eval = FALSE}
+install.packages("tidyverse")
+library(tidyverse)
+```
+
+
+- **ggplot2**: Implements the grammar of graphics for creating complex plots layer by layer.
+  
+- **dplyr**: Provides tools for efficient data manipulation, including filtering, selecting, transforming, and summarizing data.
+  
+- **tidyr**: Focuses on data tidying tasks like reshaping data between wide and long formats, and handling missing values.
+  
+- **readr**: Offers fast and flexible functions for importing and parsing data from various file formats into R.
+  
+- **purrr**: Enhances R's functional programming capabilities, enabling concise and powerful application of functions to data.
+  
+- **tibble**: Modern data frame implementation with improved printing, support for lazy data loading, and enhanced compatibility with tidyverse packages.
+  
+- **stringr**: Simplifies string manipulation tasks with consistent functions for pattern matching, substring extraction, and text processing.
+  
+- **forcats**: Provides tools for managing categorical variables, including reordering factor levels and handling missing categories.
+
+We will be focusing on `ggplot2` in particular today.
+
+***
+
+### Our First ggplot 
+
+`ggplot2` utilizes a syntax that differs a bit base R. Where as in base R, we start with a plot and add to it, in `ggplot2`, you adjust code layer by layer and print in one go. We pose an example question to help us understand this:
+
+- Do cars with big engines use more fuel than cars with small engines? 
+
+```{r, fig.height=6}
+ggplot(data = mpg) + # + needs to be at the end of the line
+  geom_point(mapping = aes(x = displ, y = hwy))
+```
+
+### The basic graphing template in `ggplot2`
+```{r, eval=F}
+ggplot(data = <DATA>) + 
+  <GEOM_FUNCTION>(
+     mapping = aes(<MAPPINGS>),
+     stat = <STAT>,        # optional
+     position = <POSITION> # optional
+  )
+```  
+
+***
+
+# Aesthetic mappings
+
+An **aesthetic** is a visual property of the objects in your plot. 
+
+- Aesthetics include things like the size, the shape, or the color of your points.
+
+- You can display a point in different ways by changing the values of its aesthetic properties. 
+
+### Aesthetic mappings for `geom_point()` - `color`
+
+Example: map the **colors** of the points to reveal the class of each car.
+
+```{r, fig.height=5.5}
+ggplot(data = mpg) + 
+  geom_point(mapping = aes(x = displ, y = hwy, color = class))
+```
+
+### **Exercise**
+
+(i) What's gone wrong with the following code? Why are the points not blue?
+
+```{r, collapse=T}
+ggplot(data = mpg) + 
+  geom_point(mapping = aes(x = displ, y = hwy, color = "blue"))
+```
+
+**INSERT_YOUR_ANSWER**
+
+Modify the code to plot blue points. To do this, the color argument needs to be outside the aesthetic mapping, but still inside `geom_point` as an argument.
+
+
+```{r, collapse=T}
+# Enter your code here
+ggplot(data = mpg) + 
+  geom_point(mapping = aes(x = displ, y = hwy), color = "blue")
+```
+
+(ii) What happens if you map an aesthetic to something other than a variable name, like `aes(colour = displ < 5)`? Note, you'll also need to specify x and y.
+
+Try it here!
+
+```{r, collapse=T}
+# Enter your code here
+ggplot(data = mpg) + 
+  geom_point(mapping = aes(x = displ, y = hwy, colour = displ < 5))
+```
+
+**INSERT_YOUR_ANSWER**
+
+
+### Aesthetic mappings for `geom_point()` - `size`
+
+Example: map the **sizes** of the points to reveal the class of each car.
+
+```{r, fig.height=5.5}
+ggplot(data = mpg) + 
+  geom_point(mapping = aes(x = displ, y = hwy, size = class))
+```
+
+### Aesthetic mappings for `geom_point()` - `alpha`
+
+Example: map the **transparency** of the points to reveal the class of each car.
+```{r, fig.height=5.5}
+ggplot(data = mpg) + 
+  geom_point(mapping = aes(x = displ, y = hwy, alpha = class))
+```
+
+### Aesthetic mappings for `geom_point()` - `shape`
+
+Example: map the **shape** of the points to reveal the class of each car.
+```{r, fig.height=5, collapse=T}
+ggplot(data = mpg) + 
+  geom_point(mapping = aes(x = displ, y = hwy, shape = class))
+```
+
+### Aesthetics options for `geom_point()`
+
+If you wish to know more about the different options, you can type `?geom_point` into the console. `geom_point` understands the following aesthetics 
+
+- **x (required!)**
+- **y (required!)**
+- alpha
+- colour
+- fill
+- group
+- shape
+- size
+- stroke
+
+Learn more about these aesthetics in `vignette("ggplot2-specs")`.
+
+```{r, eval=F}
+vignette("ggplot2-specs")
+```
+
+
+***
+
+# Pattern detection - `geom_smooth()`
+
+In data analysis, uncovering patterns and relationships within data sets is crucial for understanding underlying trends and making informed decisions. Building off the scatter plot we use the `geom_smooth()` to help explore patterns.
+
+We use `grid.arrange()` in the `gridExtra` library to help us rearrange the plots. You may need to install it if you do not have the package already.
+
+```{r}
+# install.packages("gridExtra")
+library(gridExtra)
+```
+
+```{r, fig.height=4.5}
+# gives scatter plot
+plot1 <- ggplot(data = mpg) + 
+  geom_point(mapping = aes(x = displ, y = hwy))
+# gives trend (without points)
+plot2 <- ggplot(data = mpg) + 
+  geom_smooth(mapping = aes(x = displ, y = hwy))
+grid.arrange(plot1, plot2, ncol=2)
+```
+
+### Multiple geoms/layers in the same plot
+
+We can then combine the two points together and visualize it that way.
+
+```{r, fig.height=5.5}
+ggplot(data = mpg) + 
+  geom_point(mapping = aes(x = displ, y = hwy)) +
+  geom_smooth(mapping = aes(x = displ, y = hwy))
+```
+
+### Aesthetics options for `geom_smooth()`
+
+
+`geom_smooth` understands the following aesthetics 
+
+- **x (required!)**
+- **y (required!)**
+- alpha
+- colour
+- fill
+- group
+- linetype (line specific)
+- size 
+- weight
+- ymax
+- ymin
+
+Learn more about these aesthetics in `vignette("ggplot2-specs")`.
+
+```{r, eval=F}
+vignette("ggplot2-specs")
+```
+
+### Aesthetic mappings for `geom_smooth()` - `group`
+
+- By default, `geom_smooth()` uses a single geometric object to display the entire data.
+- You can set the `group` aesthetic to a categorical variable to draw multiple objects.
+
+```{r, fig.height=6}
+ggplot(data = mpg) +
+  geom_smooth(mapping = aes(x = displ, y = hwy, group = drv))
+```
+
+### Aesthetic mappings for `geom_smooth()` - `linetype`
+
+- In practice, `ggplot2` will automatically group the data whenever you map an aesthetic (for example, `linetype`) to a discrete variable.
+
+```{r, fig.height=6}
+ggplot(data = mpg) + 
+  geom_smooth(mapping = aes(x = displ, y = hwy, linetype = drv))
+```
+
+### Aesthetic mappings for both `geom_point()` & `geom_smooth()`
+
+```{r, fig.height=5.5}
+ggplot(data = mpg) +
+  geom_point(mapping = aes(x = displ, y = hwy, col = drv)) +
+  geom_smooth(mapping = aes(x = displ, y = hwy, col = drv, linetype = drv))
+```
+
+### Global and local aesthetic mappings
+
+```{r, fig.height=5.5}
+ggplot(data = mpg, 
+       mapping = aes(x = displ, y = hwy, col = drv)) + # global mapping
+  geom_point() +
+  geom_smooth(mapping = aes(linetype = drv)) # local mapping for the layer
+```
+
+### `geom_smooth()` - other arguments
+
+```{r, fig.height=6}
+ggplot(data = mpg, mapping = aes(x = displ, y = hwy)) + 
+  geom_point() +
+  geom_smooth(se = FALSE) # remove interval
+```
+
+```{r, fig.height=6}
+ggplot(data = mpg, mapping = aes(x = displ, y = hwy)) + 
+  geom_point() +
+  geom_smooth(method = "lm") # change method of prediction
+```
+
+### DEMO: `geom_smooth()`
+
+```{r, fig.height=6.5, echo=F, message=F}
+ggplot(data = mpg, mapping = aes(x = displ, y = hwy, col = class)) + 
+  geom_point() +
+  geom_smooth(method = "lm", se = F)
+```
+
+### **Exercise**
+
+Write your own ggplot code to reproduce the following four plots. 
+When generating these plots, focus on the aesthetic mappings in the reference plot. It is OK if the text font size or point size in your plot look different from the reference plot. 
+
+(i) Reproduce this plot:
+
+![](ggplot2-ex-i.png)
+
+
+```{r}
+# insert code here
+
+```
+
+
+(ii) Reproduce this plot:
+
+![](ggplot2-ex-ii.png)
+
+
+```{r}
+# insert code here
+```
+
+
+(iii) Reproduce this plot:
+
+![](ggplot2-ex-iii.png)
+
+```{r}
+# insert code here
+```
+
+
+
+
+(iv) Reproduce this plot:
+
+![](ggplot2-ex-iv.png)
+
+
+```{r}
+# insert code here
+```
+
+***
+
+# Line Plots
+
+Similar to the format for scatter plots, to create a line plot, we start with the `ggplot(data = data_name) +` call and then add the `geom_histogram(mapping = aes(...))` call. You will notice that the pattern remains relatively consistent throughout `ggplot2` usage.
+
+
+```{r, eval = FALSE}
+ggplot(data = df, aes(x = x_var, y = y_var)) +
+  geom_line()
+```
+
+
+# Histogram!
+
+Note: histograms and bar plots are NOT the same. Although sometimes used interchangeably, most statisticians will say they are note. The key distinction is what the purpose is for. Generally,
+
+- Histograms are for visualization of the distribution of *numerical* variables
+- Bar plots are used for visualization of *categorical* variables.
+
+Similar to the format for scatter plots and line plots, to create a histogram, we start with the `ggplot(data = data_name) +` call and then add the `geom_histogram(mapping = aes(...))` call.
+
+```{r, eval = FALSE}
+ggplot(data = your_data) +
+  geom_histogram(mapping = aes(x = your_variable))
+```
+
+Visualizing the histogram
+
+```{r, eval = FALSE}
+ggplot(data = mpg) +
+  geom_histogram(mapping = aes(x = hwy), bins = 30, fill = "skyblue", color = "black") +
+  labs(title = "Histogram of Highway MPG", x = "Highway MPG", y = "Frequency")
+```
+
+***
+
+# The `diamonds` data frame
+
+We explore another dataset in `ggplot2` library: `diamonds`. This data set contains the prices and other attributes of almost 54,000 diamonds. To view more in detail, type `?diamonds` in the console.
+
+```{r}
+dim(diamonds)  # dimension of the table
+#names(diamonds)  # list the variables in diamonds
+#str(diamonds)  # list the structures in diamonds
+glimpse(diamonds)  # get a glimpse of the diamonds data
+```
+
+Make sure to note which variables are categorical or not!
+
+***
+
+
+# Bar plot for categorical variable 
+
+### `geom_bar()` makes bar plot (histogram) for discrete variable 
+
+
+```{r, fig.height=5.5}
+ggplot(data = diamonds) + 
+  geom_bar(mapping = aes(x = cut))
+```
+
+### Make a proportion bar chart (relative frequency histogram)
+
+```{r, fig.height=5}
+plot1 <- ggplot(data = diamonds) + 
+  geom_bar(mapping = aes(x = cut, y = ..prop.., group = 1))
+plot2 <- ggplot(data = diamonds) + 
+  geom_bar(mapping = aes(x = cut, y = ..prop..))
+grid.arrange(plot1, plot2, ncol=2)
+```
+
+
+### Aesthetics options for `geom_bar()`
+
+`geom_bar()` understands the following aesthetics:
+
+- **x (required!)**
+- alpha
+- colour
+- fill
+- group
+- linetype
+- size
+
+Learn more about these aesthetics in `vignette("ggplot2-specs")`.
+
+```{r, eval=F}
+vignette("ggplot2-specs")
+```
+
+### `geom_bar()` aesthetics - `colour` vs `fill`
+
+You can color a bar chart using either the `colour` aesthetic, or, more usefully, `fill`:
+
+```{r, fig.height=4}
+library(gridExtra)
+p1 <- ggplot(data = diamonds) + 
+  geom_bar(mapping = aes(x = cut, colour = cut))
+p2 <- ggplot(data = diamonds) + 
+  geom_bar(mapping = aes(x = cut, fill = cut))
+grid.arrange(p1, p2, ncol=2)
+```
+
+### Map the `fill` aesthetic to another variable
+
+```{r, fig.height=5.5}
+ggplot(data = diamonds) + 
+  geom_bar(mapping = aes(x = cut, fill = clarity))
+```
+
+- The bars are automatically stacked. 
+- Each colored rectangle represents a combination of `cut` and `clarity`.
+
+### Position adjustment options for `geom_bar()`
+
+The position argument specifies the position adjustment of bars, rectangles.
+
+- position = "stack" (default)
+- position = "identity" will place each object exactly where it falls in the context of the graph. 
+- position = "fill" works like stacking, but makes each set of stacked bars the same height. 
+- position = "dodge" places overlapping objects directly beside one another. 
+the bars are automatically stacked. Each colored rectangle represents a combination of cut and clarity.
+
+#### position = "identity"
+
+- place each object exactly where it falls in the graph context. 
+- not very useful for bars, because it overlaps them. 
+
+
+
+
+```{r, fig.height=5.5}
+ggplot(data = diamonds) + 
+  geom_bar(mapping = aes(x = cut, fill = clarity), 
+           position = "identity")
+```
+
+```{r, fig.height=4.5}
+plot1 <- ggplot(data = diamonds, mapping = aes(x = cut, fill = clarity)) + 
+  geom_bar(alpha = 1/5, position = "identity")
+plot2 <- ggplot(data = diamonds, mapping = aes(x = cut, colour = clarity)) + 
+  geom_bar(fill = NA, position = "identity")
+grid.arrange(plot1, plot2, ncol=2)
+```
+
+#### position = "fill"
+
+- makes each set of stacked bars the same height.
+- makes it easier to compare proportions across groups.
+
+```{r, fig.height=5}
+ggplot(data = diamonds) + 
+  geom_bar(mapping = aes(x = cut, fill = clarity), position = "fill")
+```
+
+#### position = "dodge" 
+
+- places overlapping objects directly beside one another. 
+- makes it easier to compare individual values.
+
+```{r, fig.height=5}
+ggplot(data = diamonds) + 
+  geom_bar(mapping = aes(x = cut, fill = clarity), position = "dodge")
+```
+
+
+***
+
+# Base R Graphics vs. ggplot2
+
+When it comes down to it, the choice is completely up to what you are trying to do and user preference. See the table below for a direct comparison:
+
+
+| Feature               | Base R Graphics                            | ggplot2                                    |
+|-----------------------|--------------------------------------------|--------------------------------------------|
+| **Interface**         | Direct functions (`plot()`, `hist()`, etc.) | Layered grammar of graphics approach       |
+| **Customization**     | Basic control over aesthetics              | Extensive control over aesthetics          |
+| **Ease of Use**       | Simple for basic plots                     | Steeper learning curve                    |
+| **Publication Ready** | Basic plots; less aesthetic customization | Highly customizable; publication-ready     |
+| **Package Dependency**| None                                       | Requires `ggplot2` package and ecosystem  |
+| **Performance**       | Efficient for smaller datasets             | Handles large datasets efficiently        |
+| **Integration**       | Seamless with base R functions             | Stands alone with its own syntax          |
+| **Community Support** | Widely used; ample resources               | Large community; extensive documentation  |
+
+
+### Additional Comments
+
+Note that while it is possible to create all the varying types of bar plots in base R, you need different commands (compared to one change in argument). 
+
+On the other hand in base R, it is significantly easier to do some plots such as pie chart.

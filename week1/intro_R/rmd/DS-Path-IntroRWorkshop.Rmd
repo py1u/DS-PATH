@@ -1,0 +1,892 @@
+---
+title: "DSPath: Intro to R"
+author: "Emily Ouyang"
+date: "June 18, 2024"
+output:
+  html_document:
+    toc: yes
+---
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, collapse = TRUE)
+```
+
+***
+
+# Acknowledgements
+
+This material expands on the work of Dr. Rebecca Kurtz-Garcia.
+
+***
+
+# R and R Studio
+
+### What is R and Why?
+
+R is an object oriented programming language created by Ross Ihaka and Robert Gentleman in 1993 that has since grown significantly. that is popular in research and academia. Benefits of R over other languages include:
+
+- Open-source and free!
+- Designed for statistical computing/analysis
+  - Many statistical functions built in
+  - More libraries for data science purposes
+  - Generally considered better for data visualization compared to other open-source languages (e.g. Python)
+
+### Difference Between R and R Studio
+
+
+RStudio is an **integrated development environment** (IDE) designed for R, a programming language. You can think of R as a tool for statistical analysis, and R Studio provides a tailored environment to efficiently use this tool.
+
+*RStudio has in more recent years shifted towards inclusion of other language; however, it's main usage is primarily for R.*
+
+# Installing R and RStudio
+
+### Installing R
+
+- Visit the [Comprehensive R Archive Network (CRAN) Oregon Mirror](https://ftp.osuosl.org/pub/cran/)).
+- Choose your operating system (Windows, macOS, or Linux) and download the appropriate installer.
+  - *Windows* users will want to click on the link to “Download R for Windows” and choose “install R for the first time,” then “Download R 4.4.1 for Windows.”
+  - *Mac OS* users will want to click “Download R for (Mac) OS X.” Download the install package for version R-4.4.1 for your respective processing chip (M1-3 or Intel). If you have an older macOS, it may be necessary to download an older version of R.
+  - *Linux* users will want to click on the link to “Download R for Linux.” You will need to choose the version of Linux that corresponds to your installation. Versions are available for Debian, RedHat, SUSE, and Ubuntu.
+- Follow the installation instructions provided by the installer.
+
+
+### Installing RStudio
+
+- Visit the RStudio website.
+- Navigate to the [Download RStudio page](https://www.rstudio.com/products/rstudio/download/).
+- Choose the appropriate installer for your operating system.
+- Follow the installation instructions provided by the installer.
+
+
+# Introduction to R Studio
+
+## Interface
+**Top Left: Script Editor**
+
+- Write R scripts/RMarkdown files
+- Can also view data frames/matrices
+
+**Top Right: Environment/Workspace**
+
+- **Environment**: Can see created datasets, variables, and functions
+- **History**: See previously executed R commands
+
+**Bottom Left: Console**
+
+- Type R commands here for immediate execution and output
+- ">" symbol is system prompt
+- Can do basic computation or advance calculations
+
+For example
+
+```{r, eval = FALSE}
+1+3
+```
+
+```{r, echo = FALSE}
+1+3
+```
+
+and
+
+```{r, eval = FALSE}
+exp(pi)
+```
+
+```{r, echo = FALSE}
+exp(pi)
+```
+
+The `[1]` tells you that the line is the first element of the result
+
+**Bottom Right**
+
+- **Files**: See files in your working directory
+- **Plots** Viewing graphics produced using R command
+- **Packages**: View installed packages
+- **Help**: Access R documentation inside R
+- **Viewer**: Generates HTML generated content
+
+
+## Different File Formats
+
+**R Script**
+
+- Text file containing a series of R commands or functions that can be executed sequentially.
+- Used for conducting data analysis, developing functions or algorithms, and creating reusable code
+- .R file extension 
+
+**R Markdown**
+
+- Can easily output into HTML, PDF, Word, and slideshows.
+  - Note: additional software may be needed
+- .rmd file extension
+- The format we're using today!
+
+**R Notebook**
+
+- An interactive document in which one can execute code chunks and see their outputs immediately
+- Beneficial for exploratory data analysis, iterative development, and teaching purposes
+- .rmd file extension
+
+*** 
+
+# **Introduction to Coding in R**
+
+***
+
+# Basic Syntax
+
+### Naming Conventions
+
+R has rules when it comes to naming objects. An object may start with a letter or a ., and the remaining characters may consist of letters, digits, `.` or `_`. There are also special types of objects that have already established names in R. For example, `NA`, `TRUE`, `FALSE`, if, and function should not be used as a new object name. To see a list of these reserved object names type `?Reserved` in to your console.
+
+### Comments
+Comments are an important part of building good coding practice. Leaving meaningful comments in your code significantly helps improve readability of your code.
+
+In R, comments are made using `#`. 
+
+```{r}
+# this is an example comment
+```
+
+
+
+
+### Operators
+
+An operator is a symbol that tells the compiler to preform a specific task. These tasks can vary from manipulation of objects to serving as logical checks. We introduce a few of the basic operators here. 
+
+**Arithmetic Operators**
+
+- Addition: `+`
+- Subtraction: `-`
+- Multiplication: `*`
+- Division: `/`
+- Exponentiation: `^` of `**`
+- Modulus `%%`
+
+**Function calls**
+
+R has built in mathematical functions as well. The format usually follows as the function name followed by parenthesis which may or may not include argument(s) in between. These can be split into two categories: **single element** functions and **multiple element** functions. Some common mathematical examples include:
+
+- `exp()`
+- `log()`
+- `abs()`
+
+There also functions that take in different numbers and return one output. These include:
+
+- `mean()`
+- `sum()`
+- `prod()`
+- `abs()`
+- `sd()`
+
+For example, the square root of 2 would be calculated as such:
+
+```{r}
+sqrt(2)
+```
+
+**Basic Assignment Operators**
+
+- Leftward Assignment Operator: `<-`
+- Equal Sign: `=`
+<!-- - Rightward Assignment Operator: `->` -->
+
+We can use assignment operators to store the values we calculate for future use. Doing so not only helps keep your code organized, but greatly improves efficiency of code. Using our previous example, store the square root of 2 into a variable called `sqrt2`.
+
+```{r}
+sqrt2 <- sqrt(2)
+```
+
+
+**Relational Operators**
+
+- `<` : Less than
+- `>` : Greater than
+- `<=` : Less than or equal to
+- `>=` : Greater than or equal to
+- `==` : Equal to
+- `!=` : Not equal to
+
+
+
+**Logical Operators**
+
+Logical operators are similar to relational operators. They are used to check “AND” and “OR” events. We have the `&` symbol which returns TRUE only if *BOTH* conditions are true. We also have the `|` symbol which returns TRUE if EITHER condition is true.
+
+
+
+The information discussed is summarized in the table below:
+
+
+| **Category** |**Operator**|       **Description**        | **Example**             |
+|--------------|------------|------------------------------|-------------------------|
+|**Arithmetic**| `+`        | Addition                     | `3 + 5`                 |
+|              | `-`        | Subtraction                  | `8 - 2`                 |
+|              | `*`        | Multiplication               | `4 * 6`                 |
+|              | `/`        | Division                     | `10 / 2`                |
+|              | `^` or `**`| Exponentiation               | `2^3`                   |
+|              | `%%`       | Modulus (remainder of division) | `10 %% 3`            |
+|--------------|------------|------------------------------|-------------------------|
+|**Relational**| `<`        | Less than                    | `3 < 5`                 |
+|              | `>`        | Greater than                 | `8 > 2`                 |
+|              | `<=`       | Less than or equal to        | `4 <= 4`                |
+|              | `>=`       | Greater than or equal to     | `10 >= 2`               |
+|              | `==`       | Equal to                     | `3 == 3`                |
+|              | `!=`       | Not equal to                 | `4 != 6`                |
+|--------------|------------|------------------------------|-------------------------|
+| **Logical**  | `!`        | Logical NOT (negation)       | `!(3 == 3)`             |
+|              | `&`        | Element-wise AND             | `TRUE & FALSE`          |
+|              | `|`        | Element-wise OR              | `TRUE | FALSE`          |
+|              | `&&`       | Vector-wise AND              | `c(TRUE, FALSE) && c(FALSE, TRUE)` |
+|              | `|  |`     | Vector-wise OR               | `c(TRUE, FALSE) || c(FALSE, TRUE)` |
+
+### Practice!
+
+We will now create our first variable using these assignments. Assign the value of `exp(3)` to x.
+
+```{r}
+x <- exp(3)
+```
+
+Note that variables can take on many different values from single values to whole data structures.
+
+
+### Common Data Types
+
+- `numerical`
+  - `integer`: Whole numbers with no decimals; can designate with integer followed by letter `L`, e.g. `5L`
+  - `double`: Includes both integers and real numbers (numbers which may contain decimal values) 
+- `logical`: Takes on the value `TRUE` or `FALSE`. Can explicitly set value using `TRUE` or logical statement, e.g.
+
+```{r}
+1 < pi
+```
+
+- `character`: Used to store text data
+<!-- - `complex`: Used to store real numbers and imaginary parts -->
+<!-- - `raw`: Used to store raw data types -->
+
+### typeof() and class()
+
+**typeof()**: The `typeof()` function in R tells you the type of data stored in a variable. It gives you the fundamental data type, like numeric, character, or logical. For example, `typeof(5)` returns "double" because 5 is a numeric value, and `typeof("hello")` returns "character" because "hello" is a string of characters.
+
+**class()**: provides information about the class or type of object. It gives you a more specific classification of the object, which can be useful for understanding its behavior and how it interacts with other functions. For example, `class(5)` returns "numeric" because 5 is an object of the numeric class, and `class("hello")` returns "character" because "hello" is an object of the character class.
+
+***
+
+# Data Structures
+
+### Vector
+
+
+A vector is a basic data structure that represents a sequence of elements of the same data type. It can hold numeric, character, or logical data types.
+
+To create an atomic vector, use `c()` function, which stands for "combine" or "concatenate" with each value 
+
+- Numeric vectors: `c(1, 2, 3, 4, 5)`
+- Character vectors: `c("apple", "banana", "orange")`
+- Logical vectors: `c(TRUE, FALSE, TRUE)`
+
+Can also use arithmetic operations!
+
+For example
+```{r, echo = FALSE}
+a <- c(1, 2)
+b <- c(1, 2, 3, 4)
+
+a + a
+
+a + b
+```
+
+
+**Vector Recycling**
+
+When a shorter vector is used in arithmetic operations with a longer vector, R will recycle the shorter vector to match the length of the longer one.
+
+*Note: The longer one should be a multiple of the shorter one; otherwise R will give a warning.*
+
+**Indexing in R**
+
+In R, indexing starts from 1, meaning the first element of a vector is accessed using index 1, the second element with index 2, and so on. This might feel a bit unusual if you're used to languages where indexing starts from 0, but it's a common convention in R.
+
+To access the elements inside a vector, we utilize square brackets (`[]`). So `numbers[1]` would access the first element of the `numbers` vector. 
+
+Using `:` to specify a range. So `numbers[2:4]` gives elements 2 to 4 of the `numbers` vector.
+
+In R, negative indexing is used to exclude values. For example `numbers[-1]` gives all elements except the first one.
+
+
+```{r}
+# Load the iris dataset
+data(iris)
+
+# Extract Sepal Length and Sepal Width columns
+sepal_data <- iris[, c("Sepal.Length", "Sepal.Width")]
+
+# Display the first few rows of the extracted data
+head(sepal_data)
+```
+
+
+
+
+### Matrices
+
+Matrices are two-dimensional structure with rows and columns. They can hold elements of the *same* data type, similar to vectors. Matrices can be created using functions like `matrix()` or by combining vectors using `rbind()` or `cbind()`:
+
+```{r, eval = FALSE}
+# Create a matrix with data elements
+matrix(data, nrow = number_of_rows, ncol = number_of_columns, byrow = FALSE)
+```
+
+- `data`: A vector containing the data elements to be arranged into the matrix.
+- `nrow`: Number of rows in the matrix.
+- `ncol`: Number of columns in the matrix.
+- `byrow`: Logical flag indicating if the matrix should be filled by rows (TRUE) or by columns (FALSE, default).
+
+For example,
+
+```{r}
+# Create a matrix with 3 rows and 2 columns
+mat <- matrix(1:6, nrow = 3, ncol = 2)
+mat
+```
+
+
+
+### Arrays
+
+Arrays are multi-dimensional extensions of matrices. While matrices are limited to two dimensions, arrays can have any number of dimensions. They are created using the `array()` function:
+
+```{r, eval = FALSE}
+# Create an array with data elements
+array(data, dim = c(dim1, dim2, ..., dimn))
+```
+
+- `data`: A vector containing the data elements to be arranged into the array.
+- `dim`: A numeric vector specifying the dimensions of the array (`dim1, dim2, ..., dimn`).
+
+For example,
+
+```{r}
+array(1:24, dim = c(2, 3, 4))
+```
+
+
+### Lists
+
+Lists are versatile data structures that can hold elements of different data types, including vectors, matrices, arrays, or even other lists. Each element in a list is called a component, and they can be accessed using indexing or named components. For the sake of completeness, they have been included, but we will not focus on this type of data structure today.
+
+Example:
+
+```{r}
+my_list <- list(
+  numeric_vector = c(1, 2, 3),
+  character_vector = c("a", "b", "c"),
+  matrix = matrix(1:4, nrow = 2),
+  data_frame = data.frame(x = 1:3, y = c("a", "b", "c"))
+)
+```
+
+### Data Frames
+
+Data frames are two-dimensional tabular structures similar to matrices but with more flexibility. They are used to store datasets where each column can have a different data type. Data frames are widely used in data analysis and are created using the `data.frame()` function.
+
+```{r}
+data.frame(
+  Name = c("John", "Alice", "Bob"),
+  Age = c(25, 30, 28),
+  Height = c(175, 163, 180)
+)
+```
+
+R has many built-in data frames (data sets) such as `iris`, `mtcars`, and `faithful`. To load these, type `data("x")`, where `x` is the data set name. 
+For example,
+
+```{r, results = FALSE}
+data("iris")
+```
+
+automatically stores the `iris` data set into the working environment (see top right panel), which we can click on to view.
+
+Data frames will often have different variables, each represented by a different column. To access these variables, we utilize the dataframe name followed by a dollar sign (`$`) and the variable (column) name:
+
+```{r, eval = FALSE}
+# Suppose 'df' is your data frame
+# To access a column named 'ColumnName':
+df$ColumnName
+```
+
+For example,
+
+```{r}
+iris$Sepal.Length
+```
+
+Note that in RStudio, typing the `$` automaticaly prompts a list of variables. 
+
+
+
+Many data sets you import will also automatically be formatted into data sets as well. Common functions such as `read.csv()`or `read.table()` will allow you to convert existing files on-hand into data-frames. There are other methods outside of base R, however, that will also give you a resulting data frames (e.g. connecting to database, web scrapping, API calls)
+
+Example syntax for `read.csv()` below:
+
+```{r, eval = FALSE}
+# Example usage
+df <- read.csv("file.csv")
+```
+
+### Coercion
+
+
+Coercion in R refers to the conversion of data from one type to another to ensure compatibility in operations or assignments. This can be done automatically (**implicit coercion**) or by hand using functions that as.double(), as.integer(), as.character(), and as.logical() to convert to the respective data type (** explicit coercion**).
+
+
+For implicit coercion, R follows the rules:
+
+- Character > Numeric > Integer > Logical: Conversion generally proceeds from left to right in this order. For example, a logical value TRUE or FALSE can be coerced to numeric (1 or 0), and numeric values can be coerced to integers, etc.
+
+- Logical > Numeric: TRUE is coerced to 1 and FALSE is coerced to 0.
+
+- Numeric > Character: Numbers are converted to their character representations.
+
+- Integer > Numeric: Integers are converted to doubles (real numbers).
+
+If you attempt to create a vector where some elements are of a different type than the another then R will convert all the elements to be of one type.
+
+
+```{r}
+# Define a double value
+double_value <- 3.14
+
+# Convert double to integer
+integer_value <- as.integer(double_value)
+
+# Print the result
+integer_value
+```
+
+
+
+***
+
+
+# Exercises
+
+
+1. Declare two variables `a` and `b` with values 5 and 3, respectively. Then perform the following operations:
+
+- Addition of `a` and `b`.
+- Subtraction of `b` from `a`.
+- Multiplication of `a` and `b`.
+- Division of `a` by `b`
+
+.
+```{r}
+# insert code here
+a <- 5
+b <- 3
+
+sum <- a + b
+diff <- a - b
+prod <- a * b
+div <- a / b
+
+sum
+diff 
+prod
+div
+```
+
+
+2. Practice doing some vector arithmetic!
+
+- Create a vector x with elements 1, 2, 3, 4, and 5.
+- Create another vector y with elements 6, 7, 8, 9, and 10.
+- Calculate the sum of x and y.
+- Calculate the mean of x.
+- Calculate the median of y.
+
+
+```{r}
+# insert code here
+vector1 <- c(1:5)
+vector2 <- c(6:10)
+
+#sum calculation
+vectorSum <- sum(vector1, vector2)
+vectorSum
+
+#mean of x
+meanX <- mean(vector1)
+meanX
+
+#mean of x and y
+meanXY <- mean(c(vector1, vector2))
+meanXY
+
+#median of y
+medianY <- median(c(vector1, vector2))
+medianY
+```
+
+
+
+3. Declare two variables p and q with boolean values TRUE and FALSE, respectively.
+Use logical operators to:
+
+- Check if both p and q are TRUE.
+- Check if either p or q is TRUE.
+- Check if p is TRUE and q is FALSE.
+
+```{r}
+# insert code here
+p <- TRUE
+q <- FALSE
+
+p & q #true and false => false
+p | q # true or false => true
+p & !q #true and !false => true
+```
+```{r}
+# vectorwise comparisons
+
+```
+
+
+
+# Conditional Statements
+
+Conditional statements are used to make decisions in your code based on certain conditions. There are 3 main types in R:
+
+- **If Statements**: If a specified condition is true, execute a block of code
+
+Syntax:
+
+```{r, eval = FALSE}
+if (condition) {
+  # Code to execute if condition is TRUE
+}
+```
+
+- **Else-If Statements**: If prior condition(s) is false, but a new specified condition is true, execute block of code
+
+Syntax:
+
+```{r, eval = FALSE}
+if (condition1) {
+  # Code to execute if condition1 is TRUE
+} else if (condition2) {
+  # Code to execute if condition1 is FALSE and condition2 is TRUE
+} else {
+  # Code to execute if all preceding conditions are FALSE
+}
+```
+
+- **Else Statements**: If none of the previous conditions are true, this code will execute
+
+Syntax:
+
+```{r, eval = FALSE}
+if (condition) {
+  # Code to execute if condition is TRUE
+} else {
+  # Code to execute if condition is FALSE
+}
+```
+
+
+Oftentimes, these will be combined together in some form. For example
+
+```{r}
+x <- 3
+
+if (x > 5) {
+  print("x is greater than 5")
+} else if (x > 0) {
+  print("x is positive")
+} else {
+  print("x is non-positive")
+}
+```
+
+Note that here, we use the `print()` function. This prints messages to the console based on the condition.
+
+***
+
+# Loops 
+Loops are programming structures that allow you to repeat a block of code multiple times. In R, there are 2 kinds of loops:
+
+- **For Loops**: iterate over a sequence of values or elements and execute the code block once for each element in the sequence; used generally when want to iterate a fixed number of times
+
+```{r, eval = FALSE}
+# Syntax of a for loop
+for (variable in sequence) {
+  # Code block to be executed
+}
+```
+
+
+- **While Loops**: execute the code block as long as the specified condition is true
+
+
+```{r, eval = FALSE}
+# Syntax of a while loop
+while (condition) {
+  # Code block to be executed
+  # Ensure the condition changes within the loop to avoid infinite loops
+}
+```
+
+
+Example!
+
+- Use a for loop to print the squares of numbers from 1 to 10.
+
+```{r}
+# For loop for squares
+for (i in 1:10) {
+  print(i^2)
+}
+```
+
+- Use a while loop to print the cubes of numbers from 1 to 5.
+
+```{r}
+# While loop for cubes
+# 1^3 = 1
+# 2^3 = 8
+# 3^3 = 27
+# 4^3 = 64
+# 5^3 = 125
+i <- 1
+while (i <= 5) {
+  print(i^3)
+  i <- i + 1
+}
+```
+
+***
+
+# Functions
+
+**Functions** are blocks of reusable code that perform a specific task. These are important in R as they not only make your code more readable and easier to digest, it significantly helps with organization as well. 
+
+While there are many built-in functions in R, you can define your own functions in R using the ``function()`` keyword, specifying input parameters and the code block to execute. There are 3 main parts to a function:
+
+1. Define the function: input (arguments) inside a `function` call
+2. Processing: steps that tell the computer what to do with the input.
+3. Return statement: the final output of a function (also called return value)
+
+An example of a function that squares an input is given below. We name the function `square()`
+
+```{r}
+# Define the function
+square <- function(x) {
+  return(x^2)
+}
+```
+
+1. Define: We first define our function square using the function() keyword. Inside the function, `x` is our argument.
+
+2. Process: We calculate the square of `x` using `x^2`.
+
+3. Return: We use `return()` to send the calculated result back as the output of the function. Note that the `square()` function has a `return()` statement. Functions will automatically return the last statement, but it is general practice to utilize `return()` statements for clarity.
+
+
+Once a function is defined, you can **call** it by its name and pass input arguments to it.
+ 
+```{r}
+# Call the function
+square(5)
+```
+
+
+### Practice!
+
+Create a function named `circle_area` that calculates the area of a circle (reminder: A = $\pi*r^2$)
+
+
+```{r}
+# Answer Here
+circle_area <- function(x){
+  return(pi*x^2)
+}
+
+#testing circle_area
+circle_area(2)
+```
+
+
+### Bonus!
+
+It is good practice to write functions with error messages to make your code more robust and user-friendly. These often will utilize conditional statements as well. We will practice this here.
+
+Using the previous problem, add a check to see if a number is numeric and greater than zero (Hint: using `is.numeric(x)` will help!).
+
+```{r}
+# insert code here
+radiusPass <- 2
+radiusFail <- -2
+radiusFail2 <- "2"
+  
+errorTest <- function(radius){
+  
+  #check condition
+  if(!is.numeric(radius) || radius < 0){
+    print("Error: please insert positive")
+    return(NULL)
+  }
+  
+  #return if conditions met
+  return(pi*radius^2)
+}
+
+#test error function cases
+errorTest(radiusPass)
+errorTest(radiusFail)
+errorTest(radiusFail2)
+```
+
+
+
+***
+
+# Additional Resources
+
+- [**Base R Cheatsheet](https://github.com/rstudio/cheatsheets/blob/main/base-r.pdf)
+- [**R Markdown Cheatsheet**](https://github.com/rstudio/cheatsheets/blob/main/rmarkdown-2.0.pdf)
+- [**R Cookbook** (2e) by JD Long and Paul Teetor](https://rc2e.com/)
+- [**R for Data Science (2e)** by Hadley Wickham and Garrett Grolemund](https://r4ds.hadley.nz/)
+
+
+***
+
+
+# Exercises
+
+
+1. Load `faithful`, a data set about the eruption and waiting times for the Old Faithful geyser. 
+  A.Preview the data set using `head(faithful)`. 
+  B. Get the eruption time (`eruptions`) and save it as a `erupt_time`.
+  C. Convert all the eruption times into integers. Save this value as `erupt_int` and print it out.
+
+```{r}
+# insert code here
+
+#load data
+data(faithful)
+
+#preview data
+head(faithful)
+
+#get eruption time
+erupt_time <- faithful$eruptions
+erupt_time
+
+#convert eruption time
+convertTime <- function(erupt_time){
+  erupt_int <- as.integer(erupt_time)
+  return(erupt_int)
+}
+
+convertTime(erupt_time)
+```
+
+2. You are given two vectors:
+
+- A: (120, 50, 130, 20)
+- B: (10, 400, 300)
+- C: (20, 40)
+
+  A. Add A and B together. What is the output? Is there any warning?
+  
+```{r}
+# insert code here
+a <- c(120,50,130, 20)
+b <- c(10,400, 300)
+c <- c(20, 40)
+
+#warning displays since they are vectors of not same length, but 10 gets recycled for value 20 from A
+a + b
+
+```
+  
+  
+  B. Add A and C together. What is the output? Is there any warning?
+  
+```{r}
+# insert code here
+
+#no error since they are even to even length vectors, same with odd to odd
+a + c
+```
+  
+
+3. Create a function to calculate the factorial of a number (Reminder: factorial of $x$ is the product of all positive integers less than or equal to $x$). Here are some recommended steps:
+
+  A. Define a function called calculate_factorial that takes a single argument n representing a non-negative integer. This function should return the factorial of n. Recall that the factorial of a non-negative integer n, denoted as n!, is the product of all positive integers less than or equal to n.
+
+  B. Inside the function, include a conditional statement to check if the input n is a non-negative integer. If n is not a non-negative integer, print an error message and return NULL.
+
+  C. Use a loop (either a for loop or a while loop) inside the function to calculate the factorial of n.
+
+  D. Test the calculate_factorial function with different inputs, including non-negative integers and other data types. Verify that the function returns the correct factorial for valid inputs and handles invalid inputs appropriately.
+
+```{r}
+# insert code here
+
+calculate_factorial <- function(n){
+  
+  if(is.integer(n) && n %% 1 == 0  &&n >= 0){
+    value <- 1
+    
+    for(i in 1:n){
+      value = i * value
+    }
+    return(value)
+  } else{
+    print("Error: input print non-negative number")
+    print(NULL)
+  }
+  
+}
+
+calculate_factorial(5)
+calculate_factorial(-3)
+calculate_factorial("abc")
+```
+
+
+4. Write an if statement that prints "x is greater than y" if x is greater than y, otherwise print "x is less than or equal to y".
+Create variables x and y with values 10 and 20, respectively, and test your if statement.
+
+
+```{r}
+# insert code here
+
+x <- 10
+y <- 20
+
+if(x>y){
+  cat(x,"greater than", y)
+}else{
+  cat(x, "is than or equal to", y)
+}
+```
+
+
+
+
+***
+
+
+
+
+
+
