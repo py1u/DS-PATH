@@ -515,6 +515,24 @@ div
 
 ```{r}
 # insert code here
+vector1 <- c(1:5)
+vector2 <- c(6:10)
+
+#sum calculation
+vectorSum <- sum(vector1, vector2)
+vectorSum
+
+#mean of x
+meanX <- mean(vector1)
+meanX
+
+#mean of x and y
+meanXY <- mean(c(vector1, vector2))
+meanXY
+
+#median of y
+medianY <- median(c(vector1, vector2))
+medianY
 ```
 
 
@@ -528,8 +546,17 @@ Use logical operators to:
 
 ```{r}
 # insert code here
-```
+p <- TRUE
+q <- FALSE
 
+p & q #true and false => false
+p | q # true or false => true
+p & !q #true and !false => true
+```
+```{r}
+# vectorwise comparisons
+
+```
 
 
 
@@ -632,6 +659,11 @@ for (i in 1:10) {
 
 ```{r}
 # While loop for cubes
+# 1^3 = 1
+# 2^3 = 8
+# 3^3 = 27
+# 4^3 = 64
+# 5^3 = 125
 i <- 1
 while (i <= 5) {
   print(i^3)
@@ -682,7 +714,12 @@ Create a function named `circle_area` that calculates the area of a circle (remi
 
 ```{r}
 # Answer Here
+circle_area <- function(x){
+  return(pi*x^2)
+}
 
+#testing circle_area
+circle_area(2)
 ```
 
 
@@ -694,6 +731,26 @@ Using the previous problem, add a check to see if a number is numeric and greate
 
 ```{r}
 # insert code here
+radiusPass <- 2
+radiusFail <- -2
+radiusFail2 <- "2"
+  
+errorTest <- function(radius){
+  
+  #check condition
+  if(!is.numeric(radius) || radius < 0){
+    print("Error: please insert positive")
+    return(NULL)
+  }
+  
+  #return if conditions met
+  return(pi*radius^2)
+}
+
+#test error function cases
+errorTest(radiusPass)
+errorTest(radiusFail)
+errorTest(radiusFail2)
 ```
 
 
