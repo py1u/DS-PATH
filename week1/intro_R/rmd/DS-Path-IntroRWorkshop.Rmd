@@ -778,6 +778,24 @@ errorTest(radiusFail2)
 
 ```{r}
 # insert code here
+
+#load data
+data(faithful)
+
+#preview data
+head(faithful)
+
+#get eruption time
+erupt_time <- faithful$eruptions
+erupt_time
+
+#convert eruption time
+convertTime <- function(erupt_time){
+  erupt_int <- as.integer(erupt_time)
+  return(erupt_int)
+}
+
+convertTime(erupt_time)
 ```
 
 2. You are given two vectors:
@@ -790,6 +808,13 @@ errorTest(radiusFail2)
   
 ```{r}
 # insert code here
+a <- c(120,50,130, 20)
+b <- c(10,400, 300)
+c <- c(20, 40)
+
+#warning displays since they are vectors of not same length, but 10 gets recycled for value 20 from A
+a + b
+
 ```
   
   
@@ -797,6 +822,9 @@ errorTest(radiusFail2)
   
 ```{r}
 # insert code here
+
+#no error since they are even to even length vectors, same with odd to odd
+a + c
 ```
   
 
@@ -812,6 +840,26 @@ errorTest(radiusFail2)
 
 ```{r}
 # insert code here
+
+calculate_factorial <- function(n){
+  
+  if(is.integer(n) && n %% 1 == 0  &&n >= 0){
+    value <- 1
+    
+    for(i in 1:n){
+      value = i * value
+    }
+    return(value)
+  } else{
+    print("Error: input print non-negative number")
+    print(NULL)
+  }
+  
+}
+
+calculate_factorial(5)
+calculate_factorial(-3)
+calculate_factorial("abc")
 ```
 
 
@@ -821,6 +869,15 @@ Create variables x and y with values 10 and 20, respectively, and test your if s
 
 ```{r}
 # insert code here
+
+x <- 10
+y <- 20
+
+if(x>y){
+  cat(x,"greater than", y)
+}else{
+  cat(x, "is than or equal to", y)
+}
 ```
 
 
