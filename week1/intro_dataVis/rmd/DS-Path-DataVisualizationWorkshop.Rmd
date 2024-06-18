@@ -214,7 +214,7 @@ plot(x, y1, type = "l", col = "blue", lwd = 2, ylim = c(0, max(y1, y2)),
 lines(x, y2, col = "red", lwd = 2)
 
 # Adding legend
-legend("topright", legend = c("Y = X^2", "Y = X^1.5"), 
+legend("topleft", legend = c("Y = X^2", "Y = X^1.5"), 
        col = c("blue", "red"), lwd = 2, 
        title = "Lines", cex = 0.8)
 ```
@@ -266,6 +266,14 @@ Try the code with omitting the break command, with `breaks = 5` and `breaks =  1
 
 ```{r}
 # insert code here
+
+hist(x = mpg$hwy, main = "Highways", xlab = "Highways", ylab = "Frenquecy")
+
+hist(x = mpg$hwy, breaks = 5, main = "Highways", xlab = "Highways", ylab = "Frenquecy")
+
+hist(x = mpg$hwy, breaks = 15, main = "Highways", xlab = "Highways", ylab = "Count")
+
+#the change in breaks changes the number of breaks across the distribution
 ```
 
 
@@ -287,6 +295,7 @@ First create a box plot for `hwy`. Make sure to create a title and label the cor
 
 ```{r}
 # insert code here
+boxplot(x = mpg$hwy, main = "Number of Highways Distribution" ,data = mpg,xlab = "Highways", ylab = "MPG", col = "red")
 ```
 
 
@@ -315,19 +324,22 @@ Reminder: When you type the data set name followed by `$`, a variable list will 
 boxplot(mpg$cty ~ mpg$drv,
         main = "Miles per Gallon by Number of Cylinders",
         xlab = "Number of Cylinders", ylab = "Miles per Gallon",
-        col = "lightblue", border = "blue", horizontal = TRUE)
+        col = "grey", border = "blue", horizontal = TRUE)
 ```
 
 3. Create a scatter plot to for the city mileage (`cty`) vs. the highway mileage (`hwy`). Make city mileage your y variable.
 
 ```{r}
 # insert code here
+plot(x = mpg$hwy, y = mpg$cty, main = "Scatter Plot For City Mileage vs Highway Mileage")
 ```
 
 We have that the line of best fit has intercept 0.8442 and slope 0.6832. Plot this as a red dashed line on top of the previous plot (Hint: use `lty = 2`).
 
 ```{r}
 # insert code here
+plot(x = mpg$hwy, y = mpg$cty, main = "Scatter Plot For City Mileage vs Highway Mileage")
+abline(a = 0.8442, b = 0.6832, lwd = 2, col = "red")
 ```
 
 
@@ -343,6 +355,15 @@ plot(x = hwy, y = city,
 
 ```{r}
 # insert code here
+hwy = mpg$hwy
+city = mpg$cty
+
+plot(x = hwy, y = city,
+     main = "City vs. Highway",
+     xlab = "Highway MPG", ylab = "City MPG",
+     col = ifelse(mpg$drv == "f", "red", ifelse(mpg$drv == "r", "blue", "green")))
+
+legend()
 ```
 
 ***
@@ -365,6 +386,10 @@ barplot(height, names.arg = c("Vector"," of", "Category", "Names"),
         col = "colorName/number", border = "colorName/number",
         ...)
 ```
+```{r}
+drive_types = c("Four Wheel", "Rear Wheel", "Forward Wheel")
+barplot(drive_counts, names.arg = drive_types)
+```
 
 
 ```{r, eval = FALSE}
@@ -375,6 +400,9 @@ pie(x, labels = c("Vector"," of", "Category", "Names"),
     ...)
 ```
 
+```{r}
+pie()
+```
 
 
 If you want more graphical parameters to play with, you can type `?barplot` and `?pie` respectively.
@@ -496,6 +524,8 @@ Modify the code to plot blue points. To do this, the color argument needs to be 
 
 ```{r, collapse=T}
 # Enter your code here
+ggplot(data = mpg) + 
+  geom_point(mapping = aes(x = displ, y = hwy), color = "blue")
 ```
 
 (ii) What happens if you map an aesthetic to something other than a variable name, like `aes(colour = displ < 5)`? Note, you'll also need to specify x and y.
@@ -504,7 +534,8 @@ Try it here!
 
 ```{r, collapse=T}
 # Enter your code here
-
+ggplot(data = mpg) + 
+  geom_point(mapping = aes(x = displ, y = hwy, colour = displ < 5))
 ```
 
 **INSERT_YOUR_ANSWER**
