@@ -23,6 +23,7 @@ Note that you only need to install each package once. Then you can comment out t
 # install.packages("tidyverse")
 # install.packages("maps")
 # install.packages("mapproj")
+# install.packages("nycflights13")
 ```
 
 **Load necessary packages**
@@ -93,7 +94,7 @@ This data frame contains all 336,776 flights that departed from New York City in
 
 ```{r, eval=F}
 # You only need to install it once. Note that the eval option of this chuck is set to F.
-install.packages("nycflights13")
+#install.packages("nycflights13")
 ```
 
 ```{r}
