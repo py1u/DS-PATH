@@ -1,0 +1,534 @@
+---
+title: "DS-PATH & REU R/dplyr Workshop"
+author: "Wenxiu Ma"
+date: "2024-JUN-24"
+output:
+  html_document:
+    toc: yes
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, collapse = TRUE)
+```
+
+***
+
+# Load the `tidyverse` package
+
+**Install the package necessary packages**
+
+Note that you only need to install each package once. Then you can comment out the following installation lines.
+
+```{r, eval=F}
+# install.packages("tidyverse")
+# install.packages("maps")
+# install.packages("mapproj")
+```
+
+**Load necessary packages**
+
+```{r}
+# load the package before usage
+library(tidyverse) # for `ggplot2`, `dplyr`, `tibble`, `readr`, `purrr`, and `dplyr`
+
+library(nycflights13) # for the 2013 NYC flights data set
+
+library(maps) # for map visualization
+library(mapproj) 
+```
+
+## Set the working directory
+```{r echo=F}
+# set the working directory to your own project folder
+# setwd()
+```
+
+***
+
+# Useful tutorials and reference sheets
+
+## "**R for Data Science**" by Grolemund and Wickham
+
+- Online textbook availabel at [http://r4ds.had.co.nz/](http://r4ds.had.co.nz/)
+
+## RStudio Cheat Sheets
+
+Latest cheat sheets available at [https://www.rstudio.com/resources/cheatsheets/](https://www.rstudio.com/resources/cheatsheets/)
+
+- [RStudio IDE Cheat Sheet](https://raw.githubusercontent.com/rstudio/cheatsheets/main/rstudio-ide.pdf)
+- [R Markdown Cheat Sheet](https://raw.githubusercontent.com/rstudio/cheatsheets/main/rmarkdown.pdf)
+- [Data Visualization Cheat Sheet](https://raw.githubusercontent.com/rstudio/cheatsheets/main/data-visualization.pdf)
+- [Data Transformation Cheat Sheet](https://raw.githubusercontent.com/rstudio/cheatsheets/main/data-transformation.pdf)
+- [Data tidying Cheat Sheet](https://raw.githubusercontent.com/rstudio/cheatsheets/main/tidyr.pdf)
+- [Data Import Cheat Sheet](https://raw.githubusercontent.com/rstudio/cheatsheets/main/data-import.pdf)
+- [Work with Strings Cheat Sheet](https://raw.githubusercontent.com/rstudio/cheatsheets/main/strings.pdf)
+- [Dates and Times Cheat Sheet](https://raw.githubusercontent.com/rstudio/cheatsheets/main/lubridate.pdf)    
+
+***
+
+# Typical data science project workflow
+
+![](http://r4ds.had.co.nz/diagrams/data-science.png)
+
+## Data wrangling
+First step is data wrangling. That is, getting your data into R in a useful form for visualization and modeling.
+
+![](http://r4ds.had.co.nz/diagrams/data-science-wrangle.png)
+
+## Data exploration/visualization
+Next step is data exploration. Data exploration is the art of looking at your data, rapidly generating hypotheses, quickly testing them, then repeating again and again and again. 
+
+![](http://r4ds.had.co.nz/diagrams/data-science-explore.png)
+
+## Presenting your findings
+Lastly, you need to communicate your results! It doesn’t matter how great your analysis is unless you can explain it to others.
+
+![](http://r4ds.had.co.nz/diagrams/data-science-communicate.png)
+
+***
+
+# The `nycflights13::flights` data set
+
+This data frame contains all 336,776 flights that departed from New York City in 2013. The data comes from the [US Bureau of Transportation Statistics](http://www.transtats.bts.gov/DatabaseInfo.asp?DB_ID=120&Link=0).
+
+```{r, eval=F}
+# You only need to install it once. Note that the eval option of this chuck is set to F.
+install.packages("nycflights13")
+```
+
+```{r}
+library(nycflights13)
+help(package="nycflights13")
+?flights # full documentation of flights
+# View(flights) # see the data in RStudio Viewer
+flights
+```
+
+***
+
+# What can you do with `dplyr`?
+
+- Pick observations by their values - `filter()'
+- Reorder the rows - `arrange()`
+- Pick variables by their names - `select()`
+- Create new variables with functions of existing variables - `mutate()`
+- Collapse many values down to a single summary - `summarise()`
+
+- The above five can be used in conjunction with `group_by()` which changes the scope of each function from operating on the entire dataset to operating on it group-by-group. 
+
+These six functions provide the verbs for a language of **data manipulation/wrangling**.
+
+***
+
+## Pick observations by their values - `filter()`
+
+`filter()` allows you to subset observations based on their values. 
+
+- The first argument is the name of the data frame. 
+- The second and subsequent arguments are the expressions that filter the data frame. 
+
+```{r}
+# flights that departed on Jan/1/2013
+# print out the new data frame only
+filter(flights, month == 1, day == 1)
+
+# save the new data frame to a variable, no print out
+jan1 <- filter(flights, month == 1, day == 1)
+
+# save and print out the new data frame
+(jan1 <- filter(flights, month == 1, day == 1))
+```
+
+```{r}
+# flights that departed in Nov or Dec
+filter(flights, month == 11 | month == 12)
+
+filter(flights, month %in% c(11, 12))
+```
+
+```{r}
+# flights that weren't delayed (on arrival or departure) by more than two hours
+filter(flights, !(arr_delay > 120 | dep_delay > 120))
+
+filter(flights, arr_delay <= 120, dep_delay <= 120)
+```
+
+###  Missing values - `NA` ("not available")
+
+`NA` represents an unknown value so missing values are "contagious"
+
+- Almost any operation involving an unknown value will also be unknown.
+
+```{r}
+NA > 5
+10 == NA
+NA + 10
+NA / 2
+
+NA == NA
+```
+
+- If you want to determine if a value is missing, use `is.na()`
+
+```{r}
+x <- NA
+is.na(x)
+```
+
+###  `filter()` with `NA` values
+
+- `filter()` only includes rows where the condition is TRUE
+- It excludes both FALSE and `NA` values. 
+- If you want to preserve missing values, ask for them explicitly:
+
+```{r}
+(df <- tibble(x = c(1, NA, 3)))
+
+filter(df, x > 1)
+
+filter(df, is.na(x) | x > 1)
+```
+
+### Count the number of `NA`s
+
+```{r}
+(df <- tibble(x = c(1, NA, 3, NA)))
+
+filter(df, is.na(x)) %>% count()
+```
+
+
+### **Exercise #1**
+
+(a) Find the flights that departed in the summer (July, August, and September)
+
+**INSERT_YOUR_ANSWER**
+
+(b) Find the flights that flew to Houston (IAH or HOU)
+
+**INSERT_YOUR_ANSWER**
+
+***
+
+## Combine multiple operations with the pipe `%>%`
+
+- Piping focuses on the transformations, not what's being transformed, which makes the code easier to read. 
+- `x %>% f(y)` turns into `f(x, y)`, and `x %>% f(y) %>% g(z)` turns into `g(f(x, y), z)` and so on
+
+```{r}
+df <- tibble(x = c(1, NA, 3, NA))
+
+# step-by-step transformation
+df_na <- filter(df, is.na(x))
+count(df_na)
+
+# PIPING
+# filter(df, is.na(x)) %>% count()
+df %>% filter(is.na(x)) %>% count()
+```
+
+***
+
+## Reorder the rows - `arrange()`
+
+- `arrange()` takes a data frame and a set of column names (or more complicated expressions) to order by. 
+- When more than one column name are given, each additional column will be used to break ties in the values of preceding columns.
+
+```{r}
+# sort flights by date
+arrange(flights, year, month, day)
+```
+
+###  Descending order - `desc()`
+
+- By default, `arrange()` sorts the columns in an ascending order
+- To re-order by a column in descending order, use `desc()` 
+
+```{r}
+# sort flight by departure delay in a descending order
+arrange(flights, desc(dep_delay))
+```
+
+```{r}
+# arrange(flights, desc(year, month, day)) # doesn't work!
+arrange(flights, desc(year), desc(month), desc(day))
+```
+
+### Reorder the rows with `NA`s
+
+- Missing values are always sorted at the end
+
+```{r}
+df <- tibble(x = c(5, 2, NA))
+
+arrange(df, x)
+
+arrange(df, desc(x))
+```
+
+
+### **Exercise #2**
+
+(a) Find the flights that traveled the shortest distance
+
+**INSERT_YOUR_ANSWER**
+
+(b) Find the flights that had the shortest air time
+
+**INSERT_YOUR_ANSWER**
+
+***
+
+## Pick variables by their names - `select()`
+
+- When you have large dataset (hundreds or more variables), the first challenge is often narrowing in on the variables you're actually interested in.
+- `select()` allows you to rapidly zoom in on a useful subset using operations based on the names of the variables.
+
+```{r}
+# Select columns by name
+# select(flights, year, month, day)
+
+# Select all columns between year and day (inclusive)
+select(flights, year:day) 
+```
+
+```{r}
+# Remove columns by names
+# select(data, -year, -month, -day)
+
+# Select all columns except those from year to day (inclusive)
+select(flights, -(year:day)) 
+```
+
+### Rename variables - `rename()`
+
+`rename()`, which is a variant of `select()` that keeps all the variables that aren't explicitly mentioned.
+
+```{r}
+# select(flights, tail_num = tailnum) # only one variable left
+rename(flights, tail_num = tailnum)
+```
+
+***
+
+## Create new variables - `mutate()`
+
+- `mutate()` adds new columns with functions of existing columns
+- `mutate()` always adds new columns at the end of your dataset 
+
+```{r}
+# select a subset of variables to be used in the next step
+flights_sml <- select(flights, month:day, ends_with("delay"), 
+                      distance, air_time)
+
+# create two new variables, gain and speed
+mutate(flights_sml, 
+       gain = arr_delay - dep_delay,
+       speed = distance / air_time * 60)
+```
+
+### Create new variables - `transmute()`
+
+If you only want to keep the new variables, use `transmute()`
+
+```{r}
+transmute(flights, 
+          gain = arr_delay - dep_delay,
+          hours = air_time / 60,
+          gain_per_hour = gain / hours)
+```
+
+```{r} 
+transmute(flights, dep_time, hour = dep_time %/% 100, 
+          minute = dep_time %% 100)
+```
+
+### **Exercise #3**
+
+Find the fastest flight (i.e., the flight has the highest speed). 
+Report the flight date, actual departure and arrival time, origin, destination, carrier, and flight number. 
+
+**INSERT_YOUR_ANSWER**
+
+***
+
+## Grouped summaries with `summarise()`
+
+- `summarise()` collapses a data frame to a single row
+
+```{r} 
+summarise(flights, delay = mean(dep_delay, na.rm = TRUE))
+```
+
+- `summarize()` is useful when pair it with `group_by()`
+
+```{r} 
+by_day <- group_by(flights, year, month, day)
+summarise(by_day, delay = mean(dep_delay, na.rm = TRUE))
+```
+
+```{r} 
+flights %>% group_by(year, month, day) %>% 
+  summarise(avg_delay1 = mean(arr_delay, na.rm = T), 
+            # the average positive delay
+            avg_delay2 = mean(arr_delay[arr_delay > 0], na.rm = T))
+```
+
+### Summarise multiple columns
+
+```{r}
+# count # of NAs per column
+colSums(is.na(flights)) 
+
+flights %>% summarise_all(funs(sum(is.na(.)))) %>% print(width=Inf)
+```
+
+### **Exercise #4**
+
+Which carrier had the worst delays over the year? 
+
+First filter out all canceled flights; next group by carrier; then calculate average arrival delay per carrier; last, rank your results. 
+
+Try to use the pipe `|>` to answer this question.
+
+**INSERT_YOUR_ANSWER**
+
+***
+
+# Case study - Study average delay per destination 
+
+Imagine that we want to explore the relationship between the distance and average delay for each destination.
+
+## Calculate average delay per destination
+
+```{r}
+by_dest <- group_by(flights, dest)
+delays_by_dest <- summarise(by_dest, count = n(),
+                   dist = mean(distance),
+                   delay = mean(arr_delay))
+delays_by_dest
+```
+
+### How many missing values?
+
+```{r}
+filter(delays_by_dest, is.na(delay)) 
+```
+
+```{r}
+colSums(is.na(delays_by_dest)) # count # of NAs per column
+```
+
+### Deal with missing values
+
+1. use `na.rm = TRUE` in the summary function
+
+```{r}
+delays_by_dest1 <- summarise(by_dest, count = n(),
+                   dist = mean(distance),
+                   delay = mean(arr_delay, na.rm = T))
+delays_by_dest1
+```
+
+2. filter out missing values from `flights` and use **non-canceled** flights instead
+
+```{r}
+# count # of NAs per column
+colSums(is.na(flights)) 
+```
+
+- `NA`s in `dep_delay` or `arr_delay` represent **canceled** flights
+
+```{r}
+not_canceled <- filter(flights, !is.na(dep_delay), !is.na(arr_delay))
+not_canceled
+```
+
+```{r}
+delays_by_dest2 <- not_canceled %>% group_by(dest) %>%
+  summarise(count = n(), dist = mean(distance),
+            delay = mean(arr_delay))
+delays_by_dest2
+```
+
+## First round of `ggplot2` plot
+
+```{r, fig.height=6}
+ggplot(data = delays_by_dest2, mapping = aes(x = dist, y = delay)) +
+  geom_point(aes(size = count), alpha = 1/3) +
+  geom_smooth(se = FALSE)
+```
+
+### What are the two points with largest distances?
+
+```{r}
+arrange(delays_by_dest2, desc(dist))
+```
+
+```{r}
+top_n(delays_by_dest2, 2, dist)
+```
+
+### Detect outliers in `delays_by_dest2$dist`
+
+```{r, fig.height=3}
+ggplot(data = delays_by_dest2) +
+  geom_histogram(mapping = aes(x = dist))
+```
+
+```{r, fig.height=2}
+ggplot(data = delays_by_dest2) +
+  geom_boxplot(mapping = aes( x = "", y = dist)) +
+  coord_flip()
+```
+
+## Second round of `ggplot2` plot
+
+### Data transformation & cleaning - step by step
+
+1. Filter out canceled flights;
+2. Group non-canceled flights by destination;
+3. Summarise grouped data to compute the number of flights, average distance, and average arrival delay per destination;
+4. Filter out outliers (longest distances - HNL and ANC);
+
+```{r}
+# original code - step by step
+not_canceled <- filter(flights, !is.na(dep_delay), !is.na(arr_delay))
+not_canceled_by_dest <-  group_by(not_canceled, dest)
+delays_by_dest <- summarise(not_canceled_by_dest, count = n(), 
+                            dist = mean(distance), delay = mean(arr_delay))
+delays_by_dest_cleaned <- filter(delays_by_dest, 
+                                  dest != "HNL", dest != "ANC")
+```
+
+```{r}
+# alternative code using piping %>%
+not_canceled <- filter(flights, !is.na(dep_delay), !is.na(arr_delay))
+delays_by_dest_cleaned <- not_canceled %>% 
+  group_by(dest) %>% 
+  summarise(count = n(), dist = mean(distance), delay = mean(arr_delay)) %>%
+  filter(dest != "HNL", dest != "ANC")
+```
+
+### Finally, visualization with `ggplot2`
+
+```{r, fig.height=5}
+ggplot(data = delays_by_dest_cleaned, 
+       mapping = aes(x = dist, y = delay)) +
+  geom_point(aes(size = count), alpha = 1/3) + geom_smooth(se = F)
+```
+
+### Comparison - original vs cleaned version
+
+```{r, echo=F, message=F, fig.height=4.5}
+library(gridExtra)
+plot1 <- ggplot(data=delays_by_dest, mapping=aes(x=dist, y=delay)) +
+  geom_point(aes(size=count), alpha=1/3) +
+  geom_smooth(se=FALSE) + theme(legend.position="none")
+plot2 <- ggplot(data=delays_by_dest_cleaned, mapping=aes(x=dist, y=delay)) +
+  geom_point(aes(size=count), alpha=1/3) +
+  geom_smooth(se=FALSE) + theme(legend.position="none")
+grid.arrange(plot1, plot2, ncol=2)
+```
+
+***
